@@ -9,8 +9,10 @@
   "scripts": {
     "lint": "eslint -c ./eslint.config.js \"./src*/**/*.{js,cjs,mjs,vue}\"",
     "test": "echo \"No test specified\" && exit 0",
-    "dev": "quasar dev",
-    "build": "quasar build",
+    "dev": "quasar dev -m pwa",
+    "dev:spa": "quasar dev",
+    "build": "quasar build -m pwa",
+    "preview": "vite preview --outDir dist/pwa --host 127.0.0.1 --port 4173",
     "postinstall": "quasar prepare"
   },
   "dependencies": {

@@ -73,7 +73,18 @@ export default defineConfig((/* ctx */) => {
     // Full list of options: https://v2.quasar.dev/quasar-cli-vite/quasar-config-file#devserver
     devServer: {
       // https: true,
-      open: true // opens browser window automatically
+      port: 9000,
+      open: true, // opens browser window automatically
+      proxy: {
+        '/api': {
+          target: 'http://localhost:3000',
+          changeOrigin: true
+        },
+        '/health': {
+          target: 'http://localhost:3000',
+          changeOrigin: true
+        }
+      }
     },
 
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-file#framework
@@ -99,17 +110,13 @@ export default defineConfig((/* ctx */) => {
     animations: [],
 
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-file#sourcefiles
-    // sourceFiles: {
-    //   rootComponent: 'src/App.vue',
-    //   router: 'src/router/index',
-    //   store: 'src/store/index',
-    //   pwaRegisterServiceWorker: 'src-pwa/register-service-worker',
-    //   pwaServiceWorker: 'src-pwa/custom-service-worker',
-    //   pwaManifestFile: 'src-pwa/manifest.json',
-    //   electronMain: 'src-electron/electron-main',
-    //   electronPreload: 'src-electron/electron-preload'
-    //   bexManifestFile: 'src-bex/manifest.json
-    // },
+    sourceFiles: {
+      rootComponent: 'src/App.vue',
+      router: 'src/router/index',
+      pwaRegisterServiceWorker: 'src-pwa/register-service-worker',
+      pwaServiceWorker: 'src-pwa/custom-service-worker',
+      pwaManifestFile: 'src-pwa/manifest.json'
+    },
 
     // https://v2.quasar.dev/quasar-cli-vite/developing-ssr/configuring-ssr
     ssr: {
@@ -137,8 +144,12 @@ export default defineConfig((/* ctx */) => {
 
     // https://v2.quasar.dev/quasar-cli-vite/developing-pwa/configuring-pwa
     pwa: {
-      workboxMode: 'GenerateSW',
+      workboxMode: 'InjectManifest',
       injectPwaMetaTags: true,
+      devOptions: {
+        enabled: true,
+        type: 'module'
+      },
       manifest: {
         name: 'FitFlow',
         short_name: 'FitFlow',
@@ -181,29 +192,9 @@ export default defineConfig((/* ctx */) => {
           }
         ]
       },
-      extendGenerateSWOptions(cfg) {
-        cfg.skipWaiting = true
-        cfg.clientsClaim = true
-        cfg.runtimeCaching = [
-          {
-            urlPattern: /\.(?:js|css|html)$/,
-            handler: 'StaleWhileRevalidate',
-            options: {
-              cacheName: 'fitflow-static-cache'
-            }
-          },
-          {
-            urlPattern: /\.(?:png|jpg|jpeg|svg|webp)$/,
-            handler: 'CacheFirst',
-            options: {
-              cacheName: 'fitflow-image-cache',
-              expiration: {
-                maxEntries: 80,
-                maxAgeSeconds: 60 * 60 * 24 * 30
-              }
-            }
-          }
-        ]
+      extendInjectManifestOptions(cfg) {
+        cfg.maximumFileSizeToCacheInBytes = 6 * 1024 * 1024
+        cfg.globPatterns = ['**/*.{js,css,html,ico,png,svg,webp,jpg,jpeg,gif,woff,woff2,ttf,eot,webmanifest}']
       }
       // swFilename: 'sw.js',
       // manifestFilename: 'manifest.json',

@@ -11,31 +11,31 @@ register(process.env.SERVICE_WORKER_FILE, {
 
   // registrationOptions: { scope: './' },
 
-  ready (/* registration */) {
-    // console.log('Service worker is active.')
+  ready (registration) {
+    console.info('[PWA] Service worker active.', registration)
   },
 
-  registered (/* registration */) {
-    // console.log('Service worker has been registered.')
+  registered (registration) {
+    console.info('[PWA] Service worker registered.', registration)
   },
 
-  cached (/* registration */) {
-    // console.log('Content has been cached for offline use.')
+  cached (registration) {
+    console.info('[PWA] Content cached for offline use.', registration)
   },
 
   updatefound (/* registration */) {
     // console.log('New content is downloading.')
   },
 
-  updated (/* registration */) {
-    // console.log('New content is available; please refresh.')
+  updated (registration) {
+    console.info('[PWA] New content available. Refresh recommended.', registration)
   },
 
   offline () {
-    // console.log('No internet connection found. App is running in offline mode.')
+    console.info('[PWA] App running in offline mode.')
   },
 
-  error (/* err */) {
-    // console.error('Error during service worker registration:', err)
+  error (err) {
+    console.error('[PWA] Service worker registration error:', err)
   }
 })

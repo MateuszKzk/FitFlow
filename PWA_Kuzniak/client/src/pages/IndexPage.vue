@@ -242,7 +242,7 @@
 </template>
 
 <script setup>
-import { computed, nextTick, reactive, ref, onBeforeUnmount, watch } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue'
 import { useWorkoutStore } from 'src/stores/workout-store'
 
 const OVERPASS_ENDPOINT = 'https://overpass-api.de/api/interpreter'
@@ -375,12 +375,12 @@ async function savePlan() {
   }
 
   if (form.id) {
-    store.updatePlan({
+    await store.updatePlan({
       id: form.id,
       ...payload
     })
   } else {
-    store.createPlan(payload)
+    await store.createPlan(payload)
   }
 
   resetForm()
@@ -725,5 +725,9 @@ watch(placeFilter, async () => {
   if (hasLocation.value && !locating.value) {
     await findNearby()
   }
+})
+
+onMounted(async () => {
+  await store.initStore()
 })
 </script>
