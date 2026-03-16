@@ -15,14 +15,21 @@ import { CacheableResponsePlugin } from 'workbox-cacheable-response'
 self.skipWaiting()
 clientsClaim()
 
+self.addEventListener('message', (event) => {
+  if (event.data?.type === 'SKIP_WAITING') {
+    self.skipWaiting()
+  }
+})
+
 // Use with precache injection
 precacheAndRoute(self.__WB_MANIFEST)
 
 cleanupOutdatedCaches()
 
-// Non-SSR fallbacks to index.html
-// Production SSR fallbacks to offline.html (except for dev)
-if (process.env.MODE !== 'ssr' || process.env.PROD) {
+// In Quasar PWA dev mode the fallback HTML is not always part of the precache
+// manifest yet, so binding a navigation handler to it can crash worker startup.
+// Keep the navigation fallback for non-dev builds where the file is precached.
+if ((process.env.MODE !== 'ssr' || process.env.PROD) && !process.env.DEV) {
   registerRoute(
     new NavigationRoute(
       createHandlerBoundToURL(process.env.PWA_FALLBACK_HTML),
